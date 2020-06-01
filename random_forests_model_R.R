@@ -1,45 +1,42 @@
 # This script is for fitting random forests model to the prepared data.
 
-setwd("C:/Users/timos/OneDrive/Documents/Data-analyysirotaatio/fake_data_analysis")
+#setwd("C:/Users/timos/OneDrive/Documents/Data-analyysirotaatio/fake_data_analysis")
+setwd("/home/jsjukara/")
 library(caret)
 library(tidyverse)
 library(data.table)
 library(tictoc)
+library(randomForest)
+library(pROC)
 
-data <- fread('endpointsWithDrugs.csv')
+# determine vector of mtry to try
+mtrys <- floor(sqrt(seq(0.4, 2.4, 0.2)*nrow(data)))
+print(paste("mtry's to try:" mtrys))
 
-data <- data %>%
-  select(-FINNGENID) %>%
-  mutate(I9_STR_EXH = as.factor(data$I9_STR_EXH))
+tunegrid <- expand.grid(.mtry = mtrys)
 
-# Shuffle the dataset
-set.seed(1009)
-data <- data[sample(1:nrow(data)), ]
+# enable parallel processing
+library(doParallel)
+cl <- makePSOCKcluster(10) #use 10 processors
+registerDoParallel(cl)
 
-# Select train and test datasets
-split <- round(0.8*length(data$BIRTH_YEAR))
-train_data <- data[1:split, ]
-test_data <- data[(split+1):length(data$BIRTH_YEAR), ]
-
-# grid <- expand.grid(mtry = 1:4, ntree = c(200, 300, 400),
-#                    nodesize = 1:10)
-grid2 <- expand.grid(.mtry = 2)
-
-
-# Only mtry can be tuned with caret!! 
 set.seed(1009)
 tic()
-random_forests <- train(I9_STR_EXH ~ ., data = train_data,
-                     method = "rf",
-                     metric = "ROC",
-                     tuneGrid = grid2,
-                     trControl = trainControl(method = "cv",
-                                              number = 10,
-                                              search = "random",
-                                              verboseIter = T))
+trc <- trainControl(method = "cv", 
+                    number = 10, # 10-fold CV
+                    verboseIter = FALSE,
+                    summaryFunction = twoClassSummary, # needed for ROC
+                    classProbs = TRUE) # needed for ROC
+
+rf_model <- train(I9_STR_EXH ~ ., data = train_data, 
+                   method = "rf", 
+                   metric = "ROC",
+                   tuneGrid=tunegrid,
+                   trControl = trc)
 toc()
 
+stopCluster(cl)
 
-
+saveRDS(rf_model, file="rf_model.rds")
 
 # confusionMatrix(predictions, variable)

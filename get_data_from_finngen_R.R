@@ -4,8 +4,6 @@
 setwd("/home/jsjukara/")
 library(data.table) # for using fread
 library(tidyverse)
-library(SCCS)
-library(lubridate) # for manipulating dates
 library(tictoc)
 
 # list columns to keep from phenotype files
