@@ -15,7 +15,7 @@ tic()
 # Get the data.
 # fread reads the data to datatable form
 #endpoints <- fread("endpoints_cleaned2.csv")
-#drugPurchases <- fread("fake_purchase_data.csv.gz")
+drugPurchases <- fread("fake_purchase_data.csv.gz")
 
 # OPTIONAL!
 # Next we take 1000 unique IDs to analysis
@@ -55,7 +55,6 @@ cum_drugPurchases <- data.frame(FINNGENID = ids)
 #}
 
 
-tic()
 for (n in 1:length(atcs)) {
   #get data frame of sum_PKOKO for those with at least 1 purchase
   sum_PKOKO <- drugPurchases %>%
@@ -68,7 +67,6 @@ for (n in 1:length(atcs)) {
   cum_drugPurchases <- left_join(cum_drugPurchases, sum_PKOKO, by = 'FINNGENID')
   
 }
-#toc()
 
 # Convert NAs to zeros
 cum_drugPurchases[is.na(cum_drugPurchases)] <- 0
@@ -76,16 +74,16 @@ cum_drugPurchases[is.na(cum_drugPurchases)] <- 0
 # Convert drug purchases to binary yes or no (similar to endpoints)
 bin_drugPurchases <- cum_drugPurchases
 for (i in 2:ncol(bin_drugPurchases)) {
-    bin_drugPurchases[,i] <- ifelse(bin_drugPurchases[,i]>1, 1, 0)
+  bin_drugPurchases[,i] <- ifelse(bin_drugPurchases[,i]>0, 1, 0)
 }
 
 # And lastly, join drug data to endpoint data
 endpointsWithDrugs <- left_join(endpoints, bin_drugPurchases, by = 'FINNGENID')
 
 # impute NA as 0
-for (i in 1:ncol(endpointsWithDrugs)) {
-    endpointsWithDrugs[,i] <- ifelse(is.na(endpointsWithDrugs[,i]), 0, endpointsWithDrugs[,i])
-}
+#for (i in 1:ncol(endpointsWithDrugs)) {
+#  endpointsWithDrugs[,i] <- ifelse(is.na(endpointsWithDrugs[,i]), 0, endpointsWithDrugs[,i])
+#}
 
 
 #store drug names
