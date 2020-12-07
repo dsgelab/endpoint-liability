@@ -1,7 +1,7 @@
-#Code Description
+# Code Description
 A brief overview of the steps taken by the Code
 
-##Data processing
+## Data processing
 1. change SEX from string to Numeric
 - male=0 female=1
 2. delete from from endpoint column
@@ -17,8 +17,8 @@ A brief overview of the steps taken by the Code
 6. all columns are dropped that contain only zeros
 
 
-##Visualisation
+## Visualisation
 
-##Machine Learning - Decision Tree
+## Machine Learning - Decision Tree
 
 
