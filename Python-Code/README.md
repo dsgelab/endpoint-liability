@@ -31,13 +31,12 @@ A brief overview of the steps taken by the Code
 4. train xgboost Tree
 
 ## Packages Used
-
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import os
-import sys
-import math
-import re
-import xgboost as xgb
-import sklearn
+<p> import numpy as np <br/>
+import pandas as pd <br/>
+import seaborn as sns <br/>
+import os <br/>
+import sys <br/>
+import math <br/>
+import re <br/>
+import xgboost as xgb <br/>
+import sklearn </p>

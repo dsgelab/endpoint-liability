@@ -4,6 +4,8 @@
 Created on Mon Nov 30 14:23:50 2020
 
 @author: leick
+
+Visualization of data
 """
 import pandas as pd
 import seaborn as sns

@@ -4,22 +4,26 @@
 Created on Mon Nov 30 14:23:50 2020
 
 @author: leick
+
+Prepares Data for 
 """
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import sys
-sys.setrecursionlimit(10000000)
+#import sys
+#sys.setrecursionlimit(10000000)
 
 
 #purchaseTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_purchases_sub.csv")
 #packDrugTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_packages_sub.csv")
 
 
-def dataPrep():
+def dataPrep(endpointPath, pillPath):
+    #path if not set
+    #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
+    #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
     #loading in DataTables
-    endpointTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv")
-    pillsDrugTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv")
+    endpointTable= pd.read_csv(endpointPath)
+    pillsDrugTable= pd.read_csv(pillPath)
     
     #replacing male and female with numeric identifier and make coloumn numeric
     endpointTable["SEX"]=endpointTable["SEX"].replace({"male":0,"female":1})
@@ -65,9 +69,6 @@ def dataPrep():
     mask_pattrn = '|'.join(dropList)
     clearTable = clearTable[clearTable.columns.drop(list(clearTable.filter(regex=mask_pattrn)))]
 
-
-
-    
     return clearTable
     
 #output if it is possible for avoiding calculating those Steps over and over again
