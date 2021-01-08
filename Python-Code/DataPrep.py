@@ -17,7 +17,7 @@ import pandas as pd
 #packDrugTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_packages_sub.csv")
 
 
-def dataPrep(endpointPath, pillPath):
+def dataPrep(endpointPath, pillPath, binary):
     #path if not set
     #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
     #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
@@ -60,15 +60,21 @@ def dataPrep(endpointPath, pillPath):
             clearTable[col.split('_NEVT')[0]+"_AGE"]=pd.Series(a)
                   
     #Drop Coloumns with lower than 0.005 cases
+    #clearTable2=clearTable1.loc[:, (clearTable1==0).mean() + mist=(endpointTable.isnull()).mean() < .995]#TODO Missingvalues stay in table
     clearTable=clearTable.replace(0,np.nan).dropna(thresh=clearTable.shape[0]*0.005, axis=1)
     clearTable = clearTable.fillna(0)
-
     
     #drop all columns which just contain one kind of value using dropCol
     dropList = [i.split('_NEVT')[0] for i in dropList] 
     mask_pattrn = '|'.join(dropList)
     clearTable = clearTable[clearTable.columns.drop(list(clearTable.filter(regex=mask_pattrn)))]
-
+    
+    #for binary prediction switches nevt to binary
+    if binary is True:
+        nevtColumn = [s for s in clearTable.columns if "nevt" in s.lower()]
+        for colu in nevtColumn:
+            clearTable[colu].values[clearTable[colu].values > 1] = 1
+        
     return clearTable
     
 #output if it is possible for avoiding calculating those Steps over and over again

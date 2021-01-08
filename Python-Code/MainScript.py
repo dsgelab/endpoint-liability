@@ -15,18 +15,28 @@ endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.
 pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
 #tree pic will be saved here
 picPath=codedir
+#If you want a binary prediction set True alse False
+binary= True
 
 
 os.chdir(codedir)
 
 #imports preped Data from DataPrep
 import DataPrep as dataPrep
-learnData=dataPrep.dataPrep(endpointPath, pillPath)
+learnData=dataPrep.dataPrep(endpointPath, pillPath, binary)
+
+#shortcut for already calculated Table
+#learnData=pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table_small.csv")
+
 
 #imports trained modell from ML-DecTree
 import MLDecTree as xgbTree
 #sets the endpoint of interest
-endpoint="stroke"
+endpoint="I9_STR_EXH"
 delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"]
+#discards coloumns with high correlation to endpoint
+corrValue=0.995
 #final dataprep and modell training
-accuracy, treeModell=xgbTree.MLdecTree(learnData, picPath, endpoint, delCol)
+accuracy, treeModell, corrDropList=xgbTree.MLdecTree(learnData, picPath, endpoint, delCol, corrValue, binary)
+
+
