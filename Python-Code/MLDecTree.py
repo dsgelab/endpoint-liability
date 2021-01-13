@@ -19,6 +19,7 @@ from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder 
 from sklearn.tree import export_graphviz
 import graphviz    
+import matplotlib.pyplot as plt
 
 #Gets the prepared Data
 #learnData= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table.csv")
@@ -108,12 +109,13 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     print("Accuracy: %.2f%%" % (accuracy * 100.0))
  
 #Confusion plot (makes sense when the value is binary classified)
-    plot_confusion_matrix(model,
+    conf = plot_confusion_matrix(model,
                           X_test,
                           y_test,
                           display_labels=["Have no stroke", "Have a stroke"])
 
-
+    plt.savefig(picpath + '/confmatrix', format = "png")
+    
 #Code for printing out the xgb Tree calculated and make it pretty    
     bst = model.get_booster()
     #for importance_type in ("weight","gain","cover","total_gain","total_cover"):

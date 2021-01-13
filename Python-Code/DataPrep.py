@@ -38,6 +38,7 @@ def dataPrep(endpointPath, pillPath, binary):
     
     #merge Pill and Cleartable with each other
     clearTable = clearTable.merge(pillsDrugTable, on='FINNGENID')
+    clearTable = clearTable.drop(['FINNGENID'], axis=1)
     
     #parse everything possible tu numeric
     clearTable=clearTable.apply(pd.to_numeric)
