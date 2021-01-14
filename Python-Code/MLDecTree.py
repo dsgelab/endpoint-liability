@@ -37,7 +37,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     endpointofInterest = [s for s in matching if "nevt" in s.lower()]
     corrDropCol=[]
     for colName in learnData.columns:
-        print(colName)
+        #print(colName)
         if "nevt" in colName.lower():
             coreName=colName.split('_NEVT')[0]
             for match in matching:

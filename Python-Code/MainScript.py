@@ -8,6 +8,7 @@ Created on Mon Jan  4 16:12:34 2021
 Main script for executing all code at once
 """
 import os
+from timeit import default_timer as timer
 
 #input directory of your Code
 codedir="/home/leick/Documents/AndreaGanna/Code/endpoint-liability/Python-Code"
@@ -20,11 +21,17 @@ binary= True
 
 
 os.chdir(codedir)
+#START MY TIMER
+start = timer()
 
 #imports preped Data from DataPrep
 import DataPrep as dataPrep
 learnData=dataPrep.dataPrep(endpointPath, pillPath, binary)
 
+#STOP MY TIMER
+mergetimer=timer() - start
+print(timer() - start, "s") # in seconds
+ 
 #shortcut for already calculated Table
 #learnData=pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table_small.csv")
 

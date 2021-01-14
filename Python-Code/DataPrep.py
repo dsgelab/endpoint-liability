@@ -13,6 +13,7 @@ import pandas as pd
 #sys.setrecursionlimit(10000000)
 
 
+
 #purchaseTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_purchases_sub.csv")
 #packDrugTable= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_packages_sub.csv")
 
@@ -24,6 +25,7 @@ def dataPrep(endpointPath, pillPath, binary):
     #loading in DataTables
     endpointTable= pd.read_csv(endpointPath)
     pillsDrugTable= pd.read_csv(pillPath)
+
     
     #replacing male and female with numeric identifier and make coloumn numeric
     endpointTable["SEX"]=endpointTable["SEX"].replace({"male":0,"female":1})
@@ -35,14 +37,19 @@ def dataPrep(endpointPath, pillPath, binary):
     #drop all unneccary columns
     clearTable=endpointTable.drop(endpointList, axis=1)
     clearTable=clearTable.drop(['BL_AGE'], axis=1)
-    
+
     #merge Pill and Cleartable with each other
-    clearTable = clearTable.merge(pillsDrugTable, on='FINNGENID')
-    clearTable = clearTable.drop(['FINNGENID'], axis=1)
+    #clearTable = clearTable.merge(pillsDrugTable, on='FINNGENID')
+    #clearTable = clearTable.drop(['FINNGENID'], axis=1)
+   
+    #alternativ merge using join
+    clearTable=clearTable.set_index('FINNGENID').sort_index()
+    pillsDrugTable=pillsDrugTable.set_index('FINNGENID').sort_index()
+    clearTable = clearTable.join(pillsDrugTable, how='outer') 
     
     #parse everything possible tu numeric
     clearTable=clearTable.apply(pd.to_numeric)
-    
+
     #goes through every column in endpoint data
     dropList=[]
     for col in clearTable.columns:
@@ -53,17 +60,20 @@ def dataPrep(endpointPath, pillPath, binary):
         if clearTable[col].unique().size < 2:
             dropList.append(col)
     #drops all ages in _AGES which are not related to an endpoint event in _NEVT 
-        if col.split('_NEVT')[0] in endpointList:
-            trueT=np.array(clearTable[col]>0)
-            print(col)
-            a = np.array(clearTable[col.split('_NEVT')[0]+"_AGE"])
-            a = np.where(trueT, a, a*0)
-            clearTable[col.split('_NEVT')[0]+"_AGE"]=pd.Series(a)
-                  
+        else:
+            if col.split('_NEVT')[0] in endpointList:
+                trueT=np.array(clearTable[col]>0)
+                #print(col)
+                a = np.array(clearTable[col.split('_NEVT')[0]+"_AGE"])
+                a = np.where(trueT, a, a*0)
+                pdNump=pd.DataFrame(a, index=clearTable.index)
+                clearTable[col.split('_NEVT')[0]+"_AGE"]=pdNump
+                
     #Drop Coloumns with lower than 0.005 cases
     #clearTable2=clearTable1.loc[:, (clearTable1==0).mean() + mist=(endpointTable.isnull()).mean() < .995]#TODO Missingvalues stay in table
-    clearTable=clearTable.replace(0,np.nan).dropna(thresh=clearTable.shape[0]*0.005, axis=1)
+    clearTable = clearTable.replace(0,np.nan).dropna(thresh=clearTable.shape[0]*0.005, axis=1)
     clearTable = clearTable.fillna(0)
+    #2988 mergclearTable
     
     #drop all columns which just contain one kind of value using dropCol
     dropList = [i.split('_NEVT')[0] for i in dropList] 
