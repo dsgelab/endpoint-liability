@@ -68,7 +68,8 @@ def dataPrep(endpointPath, pillPath, binary):
     #drop all columns which just contain one kind of value using dropCol
     dropList = [i.split('_NEVT')[0] for i in dropList] 
     mask_pattrn = '|'.join(dropList)
-    clearTable = clearTable[clearTable.columns.drop(list(clearTable.filter(regex=mask_pattrn)))]
+    if mask_pattrn:
+        clearTable = clearTable[clearTable.columns.drop(list(clearTable.filter(regex=mask_pattrn)))]
     
     #for binary prediction switches nevt to binary
     if binary is True:
