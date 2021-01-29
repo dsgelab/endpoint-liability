@@ -10,9 +10,10 @@ final data preparation and modell learning
 import re
 import numpy as np
 import pandas as pd
+from scipy import stats
 import xgboost as xgb
 from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import balanced_accuracy_score, roc_auc_score, roc_curve, make_scorer, confusion_matrix, plot_confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn import preprocessing
@@ -20,7 +21,23 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import export_graphviz
 import graphviz    
 import matplotlib.pyplot as plt
+from sklearn.model_selection import KFold, RandomizedSearchCV
 
+
+
+# Utility function to report best scores
+def report(results, n_top=3):
+    for i in range(1, n_top + 1):
+        candidates = np.flatnonzero(results['rank_test_score'] == i)
+        for candidate in candidates:
+            print("Model with rank: {0}".format(i))
+            print("Mean validation score: {0:.3f} (std: {1:.3f})"
+                  .format(results['mean_test_score'][candidate],
+                          results['std_test_score'][candidate]))
+            print("Parameters: {0}".format(results['params'][candidate]))
+            print("")
+            
+            
 #Gets the prepared Data
 #learnData= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table.csv")
 #learnData=pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table_small.csv")
@@ -73,6 +90,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     y=pd.Series(preprocessing.LabelEncoder().fit_transform(np.array(y)))
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.2)
 
+
 #    ka=pd.Series(y.unique()).sort_values()
 #   , use_label_encoder=False
     #fitting xgbTree
@@ -82,14 +100,26 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     if binary is True:
         #to be modified: gamma, n_jobs(threads)
         #normal weight: scale_pos_weight= (y != 0).sum()/(y == 0).sum()
-        model = XGBClassifier(base_score=0.5, booster="gbtree", colsample_bylevel=1, colsample_bynode=1, 
-                          colsample_bytree=1, gamma=0.25, learning_rate=0.1, max_delta_step=0,
-                          max_depth=6, min_child_weight=1, missing=None, n_estimators=100, n_jobs=1, 
-                          objective="binary:logistic", random_state=0, reg_alpha=0, reg_lambda=10, use_label_encoder=False,
-                          scale_pos_weight=20, seed=None, subsample=1, verbosity=1) 
-        
+        param_dist = {'n_estimators': stats.randint(100, 150, 500),
+              'learning_rate': stats.uniform(0.07, 0.1),
+              'subsample': stats.uniform(0.2, 0.7),
+              'max_depth': [3, 4, 5, 6, 7, 8, 9],
+              'colsample_bytree': stats.uniform(0.5, 0.45),
+              'min_child_weight': [1, 2, 3],
+              "scale_pos_weight": [10, 20, 30, 50, 100]
+             }
+        clfm = XGBClassifier(**param_dist, base_score=0.5, booster="gbtree", colsample_bylevel=1, 
+                colsample_bynode=1, gamma=0.25, max_delta_step=0, missing=None, n_jobs=-1, 
+                objective="binary:logistic", random_state=0, reg_alpha=0, reg_lambda=10, 
+                use_label_encoder=False, seed=None, verbosity=1) 
+        kfold = KFold(n_splits=10, random_state=7, shuffle=True)        
         #eval_metric:aucpr + auc + logloss
+        model = RandomizedSearchCV(clfm, param_distributions = param_dist, 
+                                   cv=kfold, n_iter = 10, scoring = 'f1', 
+                                   error_score = 0, verbose = 3, n_jobs = -1)
         model.fit(X_train, y_train, verbose=True, eval_metric="auc")
+        report(model.cv_results_)
+        
     else:
         lc = LabelEncoder() 
         lc = lc.fit(y)   
@@ -117,7 +147,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     plt.savefig(picpath + '/confmatrix', format = "png")
     
 #Code for printing out the xgb Tree calculated and make it pretty    
-    bst = model.get_booster()
+    bst = model.get_bst()
     #for importance_type in ("weight","gain","cover","total_gain","total_cover"):
     #    print("%s: " % importance_type, bst.get_score(importance_type=importance_type))
     #next two section is to make visual adjustments

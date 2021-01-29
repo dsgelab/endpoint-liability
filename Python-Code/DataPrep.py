@@ -23,7 +23,7 @@ def dataPrep(endpointPath, pillPath, binary):
     #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
     #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
     #loading in DataTables
-    endpointTable= pd.read_csv(endpointPath)
+    endpointTable= pd.read_csv(endpointPath, low_memory=False)
     pillsDrugTable= pd.read_csv(pillPath)
 
     
