@@ -1,39 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec  7 13:00:34 2020
+###########################################################################
+###########################################################################
+Created on Mon Dec 07 2020
 
-@author: leick
+@author: Lisa Eick
 
 final data preparation and modell learning
+###########################################################################
+###########################################################################
 """
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-#import lightgbm as lgb
 from skopt import BayesSearchCV
 from sklearn.model_selection import StratifiedKFold
-
 from skopt.space import Real 
-#import re
-#import numpy as np
-#import pandas as pd
-#from scipy import stats
-#import xgboost as xgb
-#from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import balanced_accuracy_score, roc_auc_score, roc_curve, make_scorer, confusion_matrix, plot_confusion_matrix
+#from sklearn.metrics import plot_confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn import preprocessing
-#from sklearn.preprocessing import LabelEncoder 
-#from sklearn.tree import export_graphviz
-#import graphviz    
-import matplotlib.pyplot as plt
-from sklearn.model_selection import KFold, RandomizedSearchCV
-from sklearn.calibration import calibration_curve
+#import matplotlib.pyplot as plt
+#from sklearn.calibration import calibration_curve
           
 
-#Gets the prepared Data
+#Gets the prepared Data if not measured before
 #learnData= pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table.csv")
 #learnData=pd.read_csv("/home/leick/Documents/AndreaGanna/Data/newFake/2020-12-07-con_endpoint_drug_table_small.csv")
 #endpoint="stroke"
@@ -85,13 +77,8 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     y=pd.Series(preprocessing.LabelEncoder().fit_transform(np.array(y)))
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.2)
 
-
-#    ka=pd.Series(y.unique()).sort_values()
-#   , use_label_encoder=False
-    #fitting xgbTree
-#    clf_xgb= xgb.XGBClassifier(use_label_encoder=False) objective="multi:softmax", num_class = len(y.unique()))
-#    clf_xgb.fit(X_train, y_train, eval_metric="merror", eval_set=[(X_test, y_test)])
-    
+    #parameter wich have to be optimized
+    #bayesion opt and first modell fitting    
     #to be modified: gamma, n_jobs(threads)
     bayes_cv_tuner = BayesSearchCV(
         estimator = xgb.XGBClassifier(            
@@ -104,7 +91,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
             ),
         search_spaces = {
             'learning_rate': Real(low=0.01, high=2, prior='log-uniform'),
-            #'min_child_weight': (0, 10),
+            'min_child_weight': (0, 10),
             'max_depth': (2, 20),
             'max_delta_step': (0, 20),
             'subsample': (0.01, 1.0, 'uniform'),
@@ -118,12 +105,12 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
             },    
         scoring = 'roc_auc',
         cv = StratifiedKFold(
-            n_splits=10,
+            n_splits=3,
             shuffle=True,
             random_state=42
             ),
         n_jobs = -1,
-        n_iter = 50,   
+        n_iter = 5,   
         verbose = 0,
         refit = True,
         random_state = 42
@@ -156,8 +143,18 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     model=result.best_estimator_
     #if best estimator not working
     #model= model.fit(X_train, y_train, verbose=True, eval_metric="aucpr")
+        
+    #The accuracy of the model is calculated and printed
+    y_pred = model.predict(X_test) 
+    predictions = [round(value) for value in y_pred]
+    accuracy = accuracy_score(y_test, predictions) 
+
+    print("Accuracy: %.2f%%" % (accuracy * 100.0))
     
-#The Probabilities of predicted targets are saved to a table
+    
+    """   
+    
+    #The Probabilities of predicted targets are saved to a table
     proba = model.predict_proba(X_test) 
     mpv, fop=calibration_curve(y_true=y_test, y_prob=proba[:,1], n_bins=10)
     # plot perfectly calibrated
@@ -166,24 +163,36 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     plt.plot(mpv, fop, marker='.')
     plt.savefig(picpath + '/calimatrix', format = "png")
     plt.clf() 
-    
-    #The accuracy of the model is calculated and printed
-    y_pred = model.predict(X_test) 
-    predictions = [round(value) for value in y_pred]
-    accuracy = accuracy_score(y_test, predictions) 
-
-    print("Accuracy: %.2f%%" % (accuracy * 100.0))
+        
+    # plot feature importance
+    xgb.plot_importance(model, max_num_features = 20)
+    plt.savefig(picpath + '/featurimportanceplot', format = "png")
+    plt.clf()
  
-#Confusion plot (makes sense when the value is binary classified)
+    #Confusion plot (makes sense when the value is binary classified)
     conf = plot_confusion_matrix(model,
                           X_test,
                           y_test,
                           display_labels=["Have no stroke", "Have a stroke"])
 
     plt.savefig(picpath + '/confmatrix', format = "png")
-    
-#Code for printing out the xgb Tree calculated and make it pretty    
-    bst = model.get_booster()
+    plt.clf() 
+
+    #Density plot for probality prediction
+    proba = model.predict_proba(X_test) 
+    mpv, fop=calibration_curve(y_true=y_test, y_prob=proba[:,1], n_bins=10)
+
+    df = pd.DataFrame(data=proba, columns=["col1", "col2"])
+    data = df.iloc[:, 0].to_numpy()
+    sb.set_style("whitegrid")  # Setting style(Optional)
+    plt.figure(figsize = (10,5)) #Specify the size of figure we want(Optional)
+    sb.distplot(data,  bins = 20, kde = True, color = 'teal', 
+                kde_kws=dict(linewidth = 4 , color = 'black'))
+    plt.savefig(picpath + '/densityplot', format = "png")
+    plt.clf() 
+
+    #Code for printing out the xgb Tree calculated and make it pretty    
+    #bst = model.get_booster()
     #for importance_type in ("weight","gain","cover","total_gain","total_cover"):
     #    print("%s: " % importance_type, bst.get_score(importance_type=importance_type))
     #next two section is to make visual adjustments
@@ -202,6 +211,6 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
     image.graph_attr = {'dpi':'400'}
     #Saving the tree where the code is saved
     image.render(picpath + '/modellbild1', format = "png")
-
-    return accuracy, model, corrDropCol
+    """
+    return accuracy, model, corrDropCol, X_test, y_test #TODO corrDropCol löschen wenn endpoint fertig ist?
  
