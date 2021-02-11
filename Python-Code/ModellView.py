@@ -59,11 +59,9 @@ def modelView (model, picpath, X_test, y_test):
     ##############################################################################
     ################### Density plot for probality prediction ####################
     ##############################################################################
-    proba = model.predict_proba(X_test) 
-    mpv, fop=calibration_curve(y_true=y_test, y_prob=proba[:,1], n_bins=10)
 
     df = pd.DataFrame(data=proba, columns=["col1", "col2"])
-    data = df.iloc[:, 0].to_numpy()
+    data = df.iloc[:, 1].to_numpy()
     sb.set_style("whitegrid")  # Setting style(Optional)
     plt.figure(figsize = (10,5)) #Specify the size of figure we want(Optional)
     sb.distplot(data,  bins = 20, kde = True, color = 'teal', 

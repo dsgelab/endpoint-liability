@@ -103,13 +103,29 @@ getAllChild(endpoint, childList)
 parentList=[]
 getAllParents(endpoint, parentList)
 reg = re.compile('\[.\|.\]')
+endpointInfo["HD_ICD_10"]=endpointInfo["HD_ICD_10"].replace({"%":"", "&":"|"}, regex=True)
 for num in range(endpointInfo.shape[0]):
     htcID=endpointInfo.loc[num, "HD_ICD_10"]#.reset_index(drop=True)[0]
     if not htcID is np.nan:
+        #changes "$!$" to nan
         if "$!$" in htcID:
             endpointInfo.loc[num, "HD_ICD_10"]=np.nan
+        #gets all XX[!|?] and solves them to XX?|XX!
         if bool(re.search(reg, htcID)):
-            print(htcID)
+            tempList=htcID.split(r'|')
+            for i in range(len(tempList)):
+                if len(tempList[i]) == 2:
+                    back=tempList[i].split(r']')[0]
+                    front=tempList[i-1].split(r'[')
+                    tempList[i]=front[0]+front[1]
+                    tempList[i-1]=front[0]+back
+                    endpointInfo.loc[num, "HD_ICD_10"]="|".join(tempList) 
+        #gets all XX[!-?] and solves them to XX?|XX!
+        if bool(re.search(reg, htcID)):
+            tempList=htcID.split(r'|')
+        
+                    
+print(tempList[i])
             htcID.split(r'|')
 
 re.findall(re.compile('\[.\|.\]'), htcID)
