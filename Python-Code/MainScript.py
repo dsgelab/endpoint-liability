@@ -20,9 +20,9 @@ from timeit import default_timer as timer
 ############# Setting of paths and important variables #######################
 ##############################################################################
 #input directory of your Code
-codedir="/home/leick/Documents/AndreaGanna/Code/endpoint-liability/Python-Code"
-endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
-pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
+codedir="/home/jsjukara/lisa/endpoint-liability/Python-Code"
+endpointPath="/home/jsjukara/finngen_data/r6_data/real_endpoints_int_sub.csv"
+pillPath="/home/jsjukara/finngen_data/r6_data/real_cum_pills_int_sub.csv"
 #tree pic will be saved here
 picPath=codedir + "/output"
 #If you want a binary prediction set True alse False
@@ -57,7 +57,8 @@ print(timer() - start, "s") # in seconds
 import MLDecTree_bayesian_opt as xgbTree
 #sets the endpoint of interest
 endpoint="I9_STR_EXH"
-delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"]
+delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY", "I9_CEREBVASC", "FG_CEREBVASC", "C_STROKE", "I9_CVD_HARD", "I9_CVD", "ASTHMA_CVDMETABOCOMORB", "COPD_CVDMETABOCOMORB" ,"ILD_CVDMETABOCOMORB", "NEURODIS", "FG_CVD", "RA_CO_MORB", "C_PSOR_ARTHR_COMORB", "SLE_COMORB", "DM_COMORB", "ASTHMA_CVDMETABOCOMORB", "ASTHMA_COMORB", "RA_CO_MORB", "RHEUMA_COMORB", "C_PSOR_ARTHR_COMORB", "SLE_COMORB", "IBD_COMORB", "COPD_MULTIMORB", "MULTIMORB"]
+
 #discards coloumns with high correlation to endpoint
 corrValue=0.995
 #final dataprep and modell training
