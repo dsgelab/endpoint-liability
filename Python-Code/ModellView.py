@@ -22,7 +22,9 @@ from sklearn.metrics import roc_auc_score
 
 
 
-def modelView (model, picpath, X_test, y_test):
+def modelView (model, codedir, X_test, y_test):
+    picpath=codedir + "/output"
+
     ##############################################################################
     ################ creating a Calibration plot and saving it ###################
     ##############################################################################
@@ -32,15 +34,14 @@ def modelView (model, picpath, X_test, y_test):
     plt.plot([0, 1], [0, 1], linestyle='--')
     # plot model reliability
     plt.plot(mpv, fop, marker='.')
-    plt.savefig(picpath + '/calimatrix', format = "png")
+    plt.savefig(picpath + '/calimatrix', format = "png", bbox_inches='tight')
     plt.clf() 
         
-    
     ##############################################################################
     ######################## plot feature importance #############################
     ##############################################################################
     xgb.plot_importance(model, max_num_features = 20)
-    plt.savefig(picpath + '/featurimportanceplot', format = "png")
+    plt.savefig(picpath + '/featurimportanceplot', format = "png", bbox_inches='tight')
     plt.clf()
  
     
@@ -52,7 +53,7 @@ def modelView (model, picpath, X_test, y_test):
                           y_test,
                           display_labels=["Have no stroke", "Have a stroke"])
 
-    plt.savefig(picpath + '/confmatrix', format = "png")
+    plt.savefig(picpath + '/confmatrix', format = "png", bbox_inches='tight')
     plt.clf() 
 
 
@@ -61,14 +62,21 @@ def modelView (model, picpath, X_test, y_test):
     ##############################################################################
 
     df = pd.DataFrame(data=proba, columns=["col1", "col2"])
-    data = df.iloc[:, 1].to_numpy()
+    strproba = df.iloc[:, 1].to_numpy()
     sb.set_style("whitegrid")  # Setting style(Optional)
     plt.figure(figsize = (10,5)) #Specify the size of figure we want(Optional)
-    sb.distplot(data,  bins = 20, kde = True, color = 'teal', 
+    sb.distplot(strproba,  bins = 20, kde = True, color = 'teal', 
                 kde_kws=dict(linewidth = 4 , color = 'black'))
-    plt.savefig(picpath + '/densityplot', format = "png")
+    plt.savefig(picpath + '/densityplot', format = "png", bbox_inches='tight')
     plt.clf() 
+    
+    ##############################################################################
+    ################### Density plot for probality prediction ####################
+    ##############################################################################
+    probaoutput = pd.DataFrame(strproba, index=list(X_test.index))
+    probaoutput.to_csv(codedir + "/probaoutput/ProbabilityTable.csv")
 
+    
     ##############################################################################
     ###### printing out first of the xgb Tree calculated and make it pretty ######
     ##############################################################################
@@ -121,7 +129,7 @@ def modelView (model, picpath, X_test, y_test):
     # show the legend
     plt.legend()
     # save the plot
-    plt.savefig(picpath + '/Roc curve', format = "png")
+    plt.savefig(picpath + '/Roc curve', format = "png", bbox_inches='tight')
     plt.clf() 
 
     

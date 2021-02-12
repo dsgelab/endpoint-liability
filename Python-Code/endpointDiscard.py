@@ -102,6 +102,7 @@ getAllChild(endpoint, childList)
 
 parentList=[]
 getAllParents(endpoint, parentList)
+
 reg = re.compile('\[.\|.\]')
 endpointInfo["HD_ICD_10"]=endpointInfo["HD_ICD_10"].replace({"%":"", "&":"|"}, regex=True)
 for num in range(endpointInfo.shape[0]):
@@ -120,13 +121,37 @@ for num in range(endpointInfo.shape[0]):
                     tempList[i]=front[0]+front[1]
                     tempList[i-1]=front[0]+back
                     endpointInfo.loc[num, "HD_ICD_10"]="|".join(tempList) 
-        #gets all XX[!-?] and solves them to XX?|XX!
-        if bool(re.search(reg, htcID)):
-            tempList=htcID.split(r'|')
-        
+        #gets all XX[!-?][!-?] and solves them to XX?!|XX!!|XX??|XX!?
+        if "][" in htcID:
+            print(htcID)
+            tempList=list(filter(None, re.split('\[|\]', htcID)))
+            i=0
+            stempList=[]
+            while i < len(tempList):
+                if "-" in tempList[i]:
+                    for j in range(int(tempList[i][0]), int(tempList[i][len(tempList[i])-1])+1):
+                        for k in range(int(tempList[i+1][0]), int(tempList[i+1][len(tempList[i+1])-1])+1):
+                            idCode=str(tempList[i-1])+str(j)+str(k)
+                            stempList.append(str(tempList[i-1])+str(j)+str(k))
+                    i=i+1
+                i=i+1
+            endpointInfo.loc[num, "HD_ICD_10"]="|".join(stempList) 
+        #gets all XX[!-?] and solves them to XX?|XX*|XX!
+        if "[" in htcID:
+            htcID=htcID.split("|")
+            for tempID in htcID:
+                if "[" in tempID and "-" in tempID:
+                    tempID=list(filter(None, re.split('\[|\]', tempID)))
+                    print(tempID)
+                else:
+                    if "[" in tempID:
+                        print("")
+
+
+            print(htcID)
                     
-print(tempList[i])
-            htcID.split(r'|')
+        list(filter(None, re.split('\[|\]', htcID)))
+        print(tempList[i])
 
 re.findall(re.compile('\[.\|.\]'), htcID)
 

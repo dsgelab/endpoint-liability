@@ -69,7 +69,7 @@ accuracy, treeModell, corrDropList, X_test, y_test=xgbTree.MLdecTree(learnData, 
 ############ the accuracy and other validation of the modell #################
 ##############################################################################
 import ModellView as mv
-mv.modelView(treeModell, picPath, X_test, y_test)
+mv.modelView(treeModell, codedir, X_test, y_test)
 
 
 #save model
