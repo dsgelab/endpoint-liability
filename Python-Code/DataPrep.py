@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov 30 14:23:50 2020
+###########################################################################
+###########################################################################
+Created on Mon Nov 30 2020
 
-@author: leick
+@author: Lisa Eick
 
-Prepares Data for 
+Prepares Data for Modell input
+###########################################################################
+###########################################################################
 """
 import numpy as np
 import pandas as pd
+#if calculation breaks of because of time limit
 #import sys
 #sys.setrecursionlimit(10000000)
 
@@ -22,10 +27,10 @@ def dataPrep(endpointPath, pillPath, binary):
     #path if not set
     #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
     #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
+    
     #loading in DataTables
-    endpointTable= pd.read_csv(endpointPath)
+    endpointTable= pd.read_csv(endpointPath, low_memory=False)
     pillsDrugTable= pd.read_csv(pillPath)
-
     
     #replacing male and female with numeric identifier and make coloumn numeric
     endpointTable["SEX"]=endpointTable["SEX"].replace({"male":0,"female":1})
