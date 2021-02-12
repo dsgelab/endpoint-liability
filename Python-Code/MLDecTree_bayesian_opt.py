@@ -110,7 +110,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
             random_state=42
             ),
         n_jobs = -1,
-        n_iter = 100,   
+        n_iter = 1,   
         verbose = 0,
         refit = True,
         random_state = 42

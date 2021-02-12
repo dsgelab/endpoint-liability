@@ -21,8 +21,8 @@ from timeit import default_timer as timer
 ##############################################################################
 #input directory of your Code
 codedir="/home/jsjukara/lisa/endpoint-liability/Python-Code"
-endpointPath="/home/jsjukara/finngen_data/r6_data/real_endpoints_int_sub.csv"
-pillPath="/home/jsjukara/finngen_data/r6_data/real_cum_pills_int_sub.csv"
+endpointPath="/home/jsjukara/finngen_data/r6_data/real_endpoints_int.csv"
+pillPath="/home/jsjukara/finngen_data/r6_data/real_cum_pills_int.csv"
 #tree pic will be saved here
 picPath=codedir + "/output"
 #If you want a binary prediction set True alse False
