@@ -32,7 +32,7 @@ from sklearn import preprocessing
 #delCol =["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"]
 #matching=list(Test.filter(regex=mask_pattrn))
 
-def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"], corrValue=0.995, binary=True):
+def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"], corrValue=0.995):
     #reads in processed Data from other function
     learnColumn=learnData.columns
     
@@ -113,7 +113,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
         n_iter = 5,   
         verbose = 0,
         refit = True,
-        random_state = 42
+        random_state =42
         )
     
     def status_print(optim_result):

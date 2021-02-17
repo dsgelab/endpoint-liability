@@ -19,6 +19,7 @@ from sklearn.calibration import calibration_curve
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
+import eli5
 
 
 
@@ -43,7 +44,15 @@ def modelView (model, codedir, X_test, y_test):
     xgb.plot_importance(model, max_num_features = 20)
     plt.savefig(picpath + '/featurimportanceplot', format = "png", bbox_inches='tight')
     plt.clf()
- 
+    test=model.get_booster().get_score(importance_type='weight')
+    test2=pd.DataFrame.from_dict(test,orient='index',columns=["featureimp"]).sort_values("featureimp", ascending=False)
+    
+    ##############################################################################
+    ######################## table feature importance ############################
+    ##############################################################################    
+    kkk=model.feature_importances_
+    feat_imp_df = pd.DataFrame(kkk, index=X_test.columns, columns=["featureimp"])
+    feat_imp_df=feat_imp_df.sort_values("featureimp", ascending=False)
     
     ##############################################################################
     ######Confusion plot (makes sense when the value is binary classified) #######
