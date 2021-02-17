@@ -132,7 +132,7 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
         
         # Save all model results
         clf_name = bayes_cv_tuner.estimator.__class__.__name__
-        all_models.to_csv(clf_name+"_cv_results.csv")
+        all_models.to_csv(picpath + "/" + clf_name +"_cv_results.csv")
 
     result = bayes_cv_tuner.fit(X_train, y_train, callback=status_print)
     

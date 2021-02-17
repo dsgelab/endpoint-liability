@@ -21,7 +21,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 import eli5
 
-
+#model=treeModell
 
 def modelView (model, codedir, X_test, y_test):
     picpath=codedir + "/output"
@@ -42,11 +42,39 @@ def modelView (model, codedir, X_test, y_test):
     ######################## plot feature importance #############################
     ##############################################################################
     xgb.plot_importance(model, max_num_features = 20)
-    plt.savefig(picpath + '/featurimportanceplot', format = "png", bbox_inches='tight')
+    plt.savefig(picpath + '/featurcountplot', format = "png", bbox_inches='tight')
     plt.clf()
     test=model.get_booster().get_score(importance_type='weight')
     test2=pd.DataFrame.from_dict(test,orient='index',columns=["featureimp"]).sort_values("featureimp", ascending=False)
     
+    
+    ##############################################################################
+    ################# chaosgame plot feature importance ########################
+    ##############################################################################
+    import shap
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X_test)
+    shap.summary_plot(shap_values, X_test, show=False, plot_type="bar", max_display=30)
+    f = plt.gcf()
+    f.savefig(picpath + '/featureimportplot', format = "png", bbox_inches='tight')
+    plt.clf() 
+
+    ##############################################################################
+    ################# permutation plot feature importance ########################
+    ##############################################################################
+    """
+    from sklearn.inspection import permutation_importance
+    r = permutation_importance(model, X_test, y_test,
+                                n_repeats=5,
+                               random_state=42,
+                               n_jobs=-1)
+ 
+    sorted_idx = r.importances_mean.argsort()
+    plt.barh(X_test.columns[sorted_idx][:21], r.importances_mean[sorted_idx][:21])
+    plt.xlabel("Permutation Importance")
+    plt.savefig(picpath + '/test', format = "png", bbox_inches='tight')
+    plt.clf() 
+    """
     ##############################################################################
     ######################## table feature importance ############################
     ##############################################################################    
@@ -80,10 +108,10 @@ def modelView (model, codedir, X_test, y_test):
     plt.clf() 
     
     ##############################################################################
-    ################### Density plot for probality prediction ####################
+    ################### Output probality prediction Table ####################
     ##############################################################################
     probaoutput = pd.DataFrame(strproba, index=list(X_test.index))
-    probaoutput.to_csv(codedir + "/probaoutput/ProbabilityTable.csv")
+    probaoutput.to_csv(codedir + "/probaoutput/ProbabilityTableTest.csv")
 
     
     ##############################################################################

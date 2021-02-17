@@ -11,7 +11,7 @@ Main script for executing all code at once
 ###########################################################################
 ###########################################################################
 """
-
+import pandas as pd
 import joblib
 import os
 from timeit import default_timer as timer
@@ -85,6 +85,29 @@ accuracy, treeModell, corrDropList, X_test, y_test=xgbTree.MLdecTree(learnData, 
 import ModellView as mv
 mv.modelView(treeModell, codedir, X_test, y_test)
 
+
+"""
+##############################################################################
+################### Traning Modell on 100% of data ###########################
+##############################################################################
+X_whole = learnData[X_test.columns]
+matching = [s for s in learnData.columns if endpoint.lower() in s.lower()]
+endpointofInterest = [s for s in matching if "nevt" in s.lower()]
+y_whole = learnData[endpointofInterest[0]].copy().apply(pd.to_numeric)
+result = treeModell.fit(X_whole, y_whole)
+"""
+
+
+##############################################################################
+############# Predicting all Data of Endpoint and drug data ##################
+########################## and writing it to csv file ########################
+##############################################################################
+#treeModell=joblib.load(picPath + "/EndpointModell.dat")
+learnData1 = learnData[X_test.columns]
+pred = treeModell.predict_proba(learnData1) 
+strproba = pd.DataFrame(data=pred, columns=["col1", "col2"]).iloc[:, 1].to_numpy()
+probaoutput = pd.DataFrame(strproba, index=list(learnData1.index))
+probaoutput.to_csv(codedir + "/probaoutput/ProbabilityTableAll.csv")
 
 #save model
 joblib.dump(treeModell, picPath + "/EndpointModell.dat") 
