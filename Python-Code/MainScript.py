@@ -20,13 +20,14 @@ from timeit import default_timer as timer
 ############# Setting of paths and important variables #######################
 ##############################################################################
 #input directory of your Code
-codedir="/home/leick/Documents/AndreaGanna/Code/endpoint-liability/Python-Code"
+codedir="/home/jsjukara/lisa/endpoint-liability/Python-Code"
 #Important table with all endpoint relations
-endInfoDir="/home/leick/Documents/AndreaGanna/Data/OldFake/FINNGEN_ENDPOINTS_DF6_public1.xlsx"
+endInfoDir="/home/jsjukara/finngen_data/r6_data/FINNGEN_ENDPOINTS_DF6_public1.xlsx"
 #Data with all endpoints
-endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
+endpointPath="/home/jsjukara/finngen_data/r6_data/real_endpoints_int.csv"
 #Data with all the substance subscription info
-pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
+pillPath="/home/jsjukara/finngen_data/r6_data/real_cum_pills_int.csv"
+
 #tree pic will be saved here
 picPath=codedir + "/output"
 #If you want a binary prediction set True alse False

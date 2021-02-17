@@ -106,12 +106,12 @@ def MLdecTree (picpath, X_train, X_test, y_train, y_test):
             },    
         scoring = 'roc_auc',
         cv = StratifiedKFold(
-            n_splits=3,
+            n_splits=5,
             shuffle=True,
             random_state=42
             ),
         n_jobs = -1,
-        n_iter = 5,   
+        n_iter = 100,   
         verbose = 0,
         refit = True,
         random_state =42
