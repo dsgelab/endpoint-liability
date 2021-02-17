@@ -105,12 +105,12 @@ def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","
             },    
         scoring = 'roc_auc',
         cv = StratifiedKFold(
-            n_splits=3,
+            n_splits=5,
             shuffle=True,
             random_state=42
             ),
         n_jobs = -1,
-        n_iter = 5,   
+        n_iter = 100,   
         verbose = 0,
         refit = True,
         random_state =42
