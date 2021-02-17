@@ -31,7 +31,8 @@ from sklearn import preprocessing
 #endpoint="stroke"
 #delCol =["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"]
 #matching=list(Test.filter(regex=mask_pattrn))
-def prePrep(learnData, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"], corrValue=0.995):
+
+def MLdecTree (learnData, picpath, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"], corrValue=0.995):
     #reads in processed Data from other function
     learnColumn=learnData.columns
     
@@ -75,9 +76,7 @@ def prePrep(learnData, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE",
     #splitting Data in train and test Data set
     y=pd.Series(preprocessing.LabelEncoder().fit_transform(np.array(y)))
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, test_size=0.2)
-    return X_train, X_test, y_train, y_test, corrDropCol
 
-def MLdecTree (picpath, X_train, X_test, y_train, y_test):
     #parameter wich have to be optimized
     #bayesion opt and first modell fitting    
     #to be modified: gamma, n_jobs(threads)
@@ -213,5 +212,5 @@ def MLdecTree (picpath, X_train, X_test, y_train, y_test):
     #Saving the tree where the code is saved
     image.render(picpath + '/modellbild1', format = "png")
     """
-    return accuracy, model #TODO corrDropCol löschen wenn endpoint fertig ist?
+    return accuracy, model, corrDropCol, X_test, y_test #TODO corrDropCol löschen wenn endpoint fertig ist?
  

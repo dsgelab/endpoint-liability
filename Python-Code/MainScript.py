@@ -74,8 +74,10 @@ import MLDecTree_bayesian_opt as xgbTree
 
 #discards coloumns with high correlation to endpoint
 corrValue=0.995
-#final dataprep and modell training
-accuracy, treeModell, corrDropList, X_test, y_test=xgbTree.MLdecTree(learnData, picPath, endpoint, delCol, corrValue)
+#final dataprep
+X_train, X_test, y_train, y_test, corrDropCol = xgbTree.prePrep(learnData, endpoint, delCol, corrValue)
+#modell training
+accuracy, treeModell = xgbTree.MLdecTree(picPath, X_train, X_test, y_train, y_test)
 
 
 ##############################################################################
