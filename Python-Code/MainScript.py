@@ -20,13 +20,13 @@ from timeit import default_timer as timer
 ############# Setting of paths and important variables #######################
 ##############################################################################
 #input directory of your Code
-codedir="/home/jsjukara/lisa/endpoint-liability/Python-Code"
+codedir="/home/leick/Documents/AndreaGanna/Code/endpoint-liability/Python-Code"
 #Important table with all endpoint relations
-endInfoDir="/home/jsjukara/finngen_data/r6_data/FINNGEN_ENDPOINTS_DF6_public1.xlsx"
+endInfoDir="/home/leick/Documents/AndreaGanna/Data/OldFake/FINNGEN_ENDPOINTS_DF6_public1.xlsx"
 #Data with all endpoints
-endpointPath="/home/jsjukara/finngen_data/r6_data/real_endpoints_int.csv"
+endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
 #Data with all the substance subscription info
-pillPath="/home/jsjukara/finngen_data/r6_data/real_cum_pills_int.csv"
+pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
 
 #tree pic will be saved here
 picPath=codedir + "/output"
@@ -106,7 +106,7 @@ result = treeModell.fit(X_whole, y_whole)
 ########################## and writing it to csv file ########################
 ##############################################################################
 #treeModell=joblib.load(picPath + "/EndpointModell.dat")
-learnData1 = learnData[X_test.columns]
+learnData1 = learnData[treeModell.get_booster().feature_names]
 pred = treeModell.predict_proba(learnData1) 
 strproba = pd.DataFrame(data=pred, columns=["col1", "col2"]).iloc[:, 1].to_numpy()
 probaoutput = pd.DataFrame(strproba, index=list(learnData1.index))
