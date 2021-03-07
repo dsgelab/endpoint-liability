@@ -52,6 +52,7 @@ def prePrep(learnData, endpoint="I9_STR_EXH", delCol=["I9_STR_SAH","I9_SEQULAE",
     #setting the y for endpoint of interest
     y = learnData[endpointofInterest[0]].copy().to_numpy()
     y = y.astype(int)
+    y[y > 0] = 1
 
     #drop all columns which are medicly too close related to endpoint 
     mask_pattrn = '|'.join(delCol) 

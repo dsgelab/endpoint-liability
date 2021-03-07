@@ -24,14 +24,14 @@ codedir="/home/leick/Documents/AndreaGanna/Code/endpoint-liability/Python-Code"
 #Important table with all endpoint relations
 endInfoDir="/home/leick/Documents/AndreaGanna/Data/OldFake/FINNGEN_ENDPOINTS_DF6_public1.xlsx"
 #Data with all endpoints
-endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
+endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub_strID.csv"
 #Data with all the substance subscription info
-pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
+pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub1.csv"
 
 #tree pic will be saved here
 picPath=codedir + "/output"
 #If you want a binary prediction set True alse False
-binary= True
+binary= False
 os.chdir(codedir)
 
 ##############################################################################
@@ -61,8 +61,8 @@ endpoint="I9_STR_EXH"
 #delCol=["I9_STR_SAH","I9_SEQULAE", "I9_STR", "IX_CIRCULATORY"]
 #imports trained modell from ML-DecTree
 import endpointDiscard as eddi
-parentlist, childlist, linkedlist = eddi.getAllRealatedEndpoints(endInfoDir, endpoint)
-delCol=parentlist + childlist + linkedlist
+parentlist, childlist, linkedlist, linkedParentList = eddi.getAllRealatedEndpoints(endInfoDir, endpoint)
+delCol=parentlist + childlist + linkedlist + linkedParentList
 delCol = list(dict.fromkeys(delCol))
 
 
@@ -116,4 +116,4 @@ probaoutput.to_csv(codedir + "/probaoutput/ProbabilityTableAll.csv")
 joblib.dump(treeModell, picPath + "/EndpointModell.dat") 
 
 #load saved model
-#treeModell = joblib.load(codedir + "/EndpointModell.dat")
+#treeModell = joblib.load(codedir + "/output/EndpointModell.dat")

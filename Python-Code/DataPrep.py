@@ -26,8 +26,10 @@ import pandas as pd
 def dataPrep(endpointPath, pillPath, binary):
     #path if not set
     #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub.csv"
-    #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub.csv"
-    
+    #for string ID input
+    #endpointPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_endpoints_sub_strID.csv"
+    #pillPath="/home/leick/Documents/AndreaGanna/Data/newFake/fake_cum_pills_sub1.csv"
+
     #loading in DataTables
     endpointTable= pd.read_csv(endpointPath, low_memory=False)
     pillsDrugTable= pd.read_csv(pillPath)
@@ -85,7 +87,7 @@ def dataPrep(endpointPath, pillPath, binary):
     mask_pattrn = '|'.join(dropList)
     if mask_pattrn:
         clearTable = clearTable[clearTable.columns.drop(list(clearTable.filter(regex=mask_pattrn)))]
-    
+
     #for binary prediction switches nevt to binary
     if binary is True:
         nevtColumn = [s for s in clearTable.columns if "nevt" in s.lower()]

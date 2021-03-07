@@ -17,7 +17,7 @@ import numpy as np
 import re
 
 
-tabledir='/home/leick/Documents/AndreaGanna/Data/OldFake/FINNGEN_ENDPOINTS_DF6_public1.xlsx'
+endInfoDir='/home/leick/Documents/AndreaGanna/Data/OldFake/FINNGEN_ENDPOINTS_DF6_public1.xlsx'
 endpoint="I9_STR_EXH"
 
 ##############################################################################
@@ -118,7 +118,8 @@ def getAllChild (endpoint, childList, endpointInfo):
 ############## Get all Parents of Endpoint of interest #######################
 ##############################################################################
 
-def getAllParents (endpoint, parentList, colsearch, endpointInfo):
+def getAllParents (endpoint, parentList, endpointInfo):
+    colsearch='INCLUDE'
     ######get all direct parents#######
     parents=endpointInfo.dropna(subset=[colsearch]).reset_index(drop=True)
     parents1=parents[parents[colsearch].str.endswith("|" + endpoint)]["NAME"].tolist()
@@ -131,13 +132,13 @@ def getAllParents (endpoint, parentList, colsearch, endpointInfo):
     if parents:
         for parent in parents:
             parentList.append(parent)
-            getAllParents(parent, parentList, colsearch, endpointInfo)
+            getAllParents(parent, parentList, endpointInfo)
 
 ##############################################################################
 ############## Get all linked of Endpoint of interest #######################
 ##############################################################################
 
-def getAllLinked (endpoint, linkedList, endpointInfog):
+def getAllLinked (endpoint, linkedList, endpointInfog, linkedParentList, endpointInfo):
     endpointInfog=endpointInfog.dropna(subset=['HD_ICD_10']).reset_index(drop=True)
     #get the rowindex of endpoint of interest (eoi)
     rowIndex=endpointInfog.index[endpointInfog["NAME"] == endpoint]
@@ -148,14 +149,19 @@ def getAllLinked (endpoint, linkedList, endpointInfog):
                     htc=htc[0:3]
                 linkedList= linkedList + endpointInfog[endpointInfog["HD_ICD_10"].str.contains(htc)]["NAME"].tolist()     
     linkedList = list(dict.fromkeys(linkedList))
-    return linkedList
+    for linkedendpoint in linkedList:
+        print(linkedendpoint)
+        tempList=[]
+        getAllParents(linkedendpoint, tempList, endpointInfo)
+        linkedParentList=linkedParentList + tempList
+    return linkedList, linkedParentList
 
 
 
 
 
 def getAllRealatedEndpoints (tabledir, endpoint):
-    endpointInfo = pd.read_excel(tabledir)
+    endpointInfo = pd.read_excel(endInfoDir)
 
     endpointInfog=endpointInfo.copy()
     endpointInfog=htc10clear(endpointInfog)
@@ -164,12 +170,13 @@ def getAllRealatedEndpoints (tabledir, endpoint):
     getAllChild(endpoint, childList, endpointInfo)
     
     parentList=[]
-    getAllParents(endpoint, parentList, 'INCLUDE', endpointInfo)
+    getAllParents(endpoint, parentList, endpointInfo)
+ #   parentList1=parentList+parentList1
+    linkedList=[]    
+    linkedParentList=[]
+    linkedList, linkedParentList = getAllLinked (endpoint, linkedList, endpointInfog, linkedParentList, endpointInfo)
     
-    linkedList=[]
-    linkedList = getAllLinked (endpoint, linkedList, endpointInfog)
-    
-    return parentList, childList, linkedList
+    return parentList, childList, linkedList, linkedParentList
 
 
 

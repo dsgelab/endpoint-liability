@@ -1,59 +1,23 @@
 digraph {
     graph [ rankdir=TB ]
 
-    0 [ label="J01AA<80" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
+    0 [ label="Z21_PERSONS_ENCOUNTERI_HEALTH_SERVI_OTH_CIRCUMSTANC2_AGE<22.04566" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
     0 -> 1 [label="yes" color="#FF0000"]
     0 -> 2 [label="no, missing" color="#0000FF"]
 
-    1 [ label="BRONCHITIS_AGE<29.9316483" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
+    1 [ label="N05AA<130" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
     1 -> 3 [label="yes" color="#FF0000"]
     1 -> 4 [label="no, missing" color="#0000FF"]
 
-    3 [ label="PC7<-0.0089744404" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
+    3 [ label="T1D_ICD9_10_NEVT<11.999999" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
     3 -> 5 [label="yes" color="#FF0000"]
     3 -> 6 [label="no, missing" color="#0000FF"]
 
-    5 [ label="leaf=-0.0024114158" fillcolor="#e48038" shape="box" style="filled" ]
+    5 [ label="leaf=2.63199282" fillcolor="#e48038" shape="box" style="filled" ]
 
-    6 [ label="PC8<-0.00861610007" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    6 -> 7 [label="yes" color="#FF0000"]
-    6 -> 8 [label="no, missing" color="#0000FF"]
+    6 [ label="leaf=-0.10554754" fillcolor="#e48038" shape="box" style="filled" ]
 
-    7 [ label="leaf=-0.00213572104" fillcolor="#e48038" shape="box" style="filled" ]
+    4 [ label="leaf=-0.113079727" fillcolor="#e48038" shape="box" style="filled" ]
 
-    8 [ label="M01AX<260" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    8 -> 9 [label="yes" color="#FF0000"]
-    8 -> 10 [label="no, missing" color="#0000FF"]
-
-    9 [ label="F5_UNSMENDIS_NEVT<0.999998987" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    9 -> 11 [label="yes" color="#FF0000"]
-    9 -> 12 [label="no, missing" color="#0000FF"]
-
-    11 [ label="ST19_DISLO_SPRAIN_STRAIN_JOINTS_LIGAM_KNEE_AGE<5.09806013" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    11 -> 13 [label="yes" color="#FF0000"]
-    11 -> 14 [label="no, missing" color="#0000FF"]
-
-    13 [ label="Z21_ANTEN_SCREE_AGE<35.1560631" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    13 -> 15 [label="yes" color="#FF0000"]
-    13 -> 16 [label="no, missing" color="#0000FF"]
-
-    15 [ label="G6_SLEEPAPNO_INCLAVO_AGE<38.350914" fillcolor="#78cbe" shape="box" style="filled, rounded" ]
-    15 -> 17 [label="yes" color="#FF0000"]
-    15 -> 18 [label="no, missing" color="#0000FF"]
-
-    17 [ label="leaf=0.0840390772" fillcolor="#e48038" shape="box" style="filled" ]
-
-    18 [ label="leaf=-0.00142004562" fillcolor="#e48038" shape="box" style="filled" ]
-
-    16 [ label="leaf=-0.00150004902" fillcolor="#e48038" shape="box" style="filled" ]
-
-    14 [ label="leaf=-0.00154000521" fillcolor="#e48038" shape="box" style="filled" ]
-
-    12 [ label="leaf=-0.00169952621" fillcolor="#e48038" shape="box" style="filled" ]
-
-    10 [ label="leaf=-0.00197752519" fillcolor="#e48038" shape="box" style="filled" ]
-
-    4 [ label="leaf=-0.00357666332" fillcolor="#e48038" shape="box" style="filled" ]
-
-    2 [ label="leaf=-0.00549887447" fillcolor="#e48038" shape="box" style="filled" ]
+    2 [ label="leaf=-0.127286613" fillcolor="#e48038" shape="box" style="filled" ]
 }

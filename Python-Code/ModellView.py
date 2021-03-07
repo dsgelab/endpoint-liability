@@ -33,6 +33,9 @@ def modelView (model, codedir, X_test, y_test):
     mpv, fop=calibration_curve(y_true=y_test, y_prob=proba[:,1], n_bins=10)
     # plot perfectly calibrated
     plt.plot([0, 1], [0, 1], linestyle='--')
+    # axis labels
+    plt.xlabel('Predicted Probability')
+    plt.ylabel('True Probability in each bin')
     # plot model reliability
     plt.plot(mpv, fop, marker='.')
     plt.savefig(picpath + '/calimatrix', format = "png", bbox_inches='tight')
@@ -102,6 +105,7 @@ def modelView (model, codedir, X_test, y_test):
     strproba = df.iloc[:, 1].to_numpy()
     sb.set_style("whitegrid")  # Setting style(Optional)
     plt.figure(figsize = (10,5)) #Specify the size of figure we want(Optional)
+    plt.xlabel('Predicted Probability')
     sb.distplot(strproba,  bins = 20, kde = True, color = 'teal', 
                 kde_kws=dict(linewidth = 4 , color = 'black'))
     plt.savefig(picpath + '/densityplot', format = "png", bbox_inches='tight')
@@ -159,7 +163,7 @@ def modelView (model, codedir, X_test, y_test):
     lr_fpr, lr_tpr, _ = roc_curve(y_test, lr_probs)
     # plot the roc curve for the model
     plt.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
-    plt.plot(lr_fpr, lr_tpr, marker='.', label='Logistic')
+    plt.plot(lr_fpr, lr_tpr, marker='.', label='Model')
     # axis labels
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
